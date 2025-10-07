@@ -1,0 +1,454 @@
+---
+title: "1 - calentando motores"
+author: "Tomás Bustos"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: show
+    theme: simplex
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
+params:
+  ruta_csv: "data/G2023_resultados_presidente.csv"
+  ruta_excel: "data/G2023_resultados_presidente.xlsx"
+  ruta_shp: "geo/ign_provincia/ign_provincia.shp"
+---
+
+# Mapas & elecciones: visualización de información geográfica con R en Ciencias Sociales
+
+El objetivo del curso es adquirir herramientas para la visualización de información geográfica utilizando R en el ámbito de las Ciencias Sociales. Se utilizarán datos electorales como un ejemplo concreto y cercano, un hilo temático que le dará estructura, coherencia e integridad a los encuentros. Habrá contenidos de tres tipos: *manejo de datos*, *herramientas de visualización* y *un ejemplo concreto* donde lo anterior esté aplicado. La idea es ir avanzando de manera iterativa, pasando en todas los encuentros por los tres tipos de contenidos mencionados antes e ir complejizando su utilziación a medida que avanzan los encuentros. 
+
+Como herramienta didáctica, cada encuentro tendrá una *pregunta que nos guíe*. Es importante para evitar perdernos en el mar de información disponible. Enfocar los esfuerzos nos va a ayudar a buscar mejor qué función necesitamos para responder nuestra pregunta y además valoriza uno de los elementos más importantes que tienen para aportar las Ciencias Sociales al mundo de datos: *hacer preguntas interesantes*.
+
+## 1. Calentando motores
+
+La idea de este encuentro es repasar manejo de datos con `tidyverse`, conocer objetos geográficos mínimos con `sf` y hacer una pequeña introducción a visualización con `ggplot`.
+
+> Librerías necesarias: **tidyverse**, **sf**.
+
+## 1.1. Antes de arrancar: conociendo los utensilios
+
+Un breve y necesario paréntesis de definiciones de los elementos con los que vamos a estar trabajando.
+
+-   **Script**: secuencia de comandos. Nuestros scripts estarán escritos en R.
+
+-   **Rstudio**: plataforma que usaremos para administrar los archivos necesarios para trabajar con R.
+
+-   **Proyecto de Rstudio**: es una forma de agrupar los distintos scripts y archivos que utilicemos en un sólo lugar. También nos facilita trabajar con directorios o guardar ciertas configuraciones del entorno.
+
+-   **Documento de R (.r)**: archivo con instrucciones escritas en R.
+
+-   **Documento de RMarkdown (.rmd)**: archivo que permite combinar instrucciones escritas en R con distintos formatos de texto. Se utiliza para escribir informes fáciles para leer y cómodos para trabajar.
+
+-   **Quarto document (.qmd)**: Símil al anterior, pero permite distintos lenguajes. Es el que está presente en la mayor parte de este curso.
+
+-   **Función**: conjunto de instrucciones empaquetados para usar con mayor comodidad.
+
+-   **Paquete/Librerías**: conjunto de funciones, en general, con el objetivo de trabajar en un rubro en particular o con cierto tipo de datos.
+
+
+## 1.2. Pregunta-problema
+
+Por ser el primer encuentro vamos a empezar por una pregunta sencilla. ¿Cómo fue el porcentaje de votos de La Libertad Avanza en las provincias argentinas en las elecciones presidenciales generales de 2023?
+
+
+## 1.3. Introducción a toda marcha
+
+Lo primero y principal es cargar las librerías que vamos a utilizar para responder a nuestra pregunta-problema. Aquí le damos la bienvenida a `tidyverse`: un conjunto de paquetes quetienen una manera similar de escribirse y utilizarse, facilitando el trabajo conjunto de las distintas librerías. La primera vez que se utiliza una librería, hay que descargarla con la función `install.packages()`.
+
+```{r}
+#install.packages("tidyverse") # instalamos el conjunto de librerías que componen la colección tidyverse
+#install.packages("sf") # instalamos la librería que usaremos para operaciones con información geográfica
+```
+
+Una vez instalados los paquetes se cargan en la instancia de trabajo que estamos utilizando.
+
+```{r}
+library(tidyverse)
+library(sf)
+```
+
+Luego, tenemos que cargar los datos que vamos a utilizar. La función dependerá del tipo de archivo que tengamos que cargar. Los tipos de archivos más comunes son .csv y .xlsx. Los datos están descargados de la plataforma [Data CP](https://www.datacp.ar/). Si hay problemas con la ruta, pueden saber dónde está ubicado `R` con la función `getwd()`.
+
+::: {.panel-tabset .nav-pills}
+### CSV
+
+```{r}
+data <- read_csv(params$ruta_csv)
+data
+```
+
+### Excel
+
+```{r}
+#install.packages("readxl") # en caso de error, instalar y cargar librería readxl 
+library(readxl)
+data <- read_excel(params$ruta_excel)
+data
+```
+:::
+
+Cuando utilizamos `R` vamos a estar utilizando *objetos*. El operador `<-` se utiliza para asignar el resultado de una función a un objeto y se puede crear con `botón alt + botón -`. Los objetos pertenecen a una *clase*, lo que implica que se permiten ciertas operaciones y se restringen otras. Por ejemplo, a los números se les puede aplicar operaciones aritméticas, a las tablas se les puede consultar sus filas-columnas y a las cadenas de texto se las puede pasar a mayúsculas.
+
+```{r}
+class(data)
+```
+
+A los archivos del tipo `data.frame` podemos aplicarle distintas funciones para hacer una exploración rápida de qué hay dentro. `dim` devuelve filas y columnas:
+
+```{r}
+dim(data)
+```
+
+`glipmse()` devuelve nombres de columnas, tipos de datos, valores de ejemplo:
+
+```{r}
+glimpse(data)
+```
+
+Para seleccionar filas que nos interesan, según algún valor, podemos utilizar la función `filter()`.
+
+```{r}
+data %>% 
+  filter(Partido=="LA LIBERTAD AVANZA" & Porcentaje > 40)
+```
+
+Con el operador pipe (`%>%`) se concatenan las distintas funciones. Si en cambio queremos seleccionar algunas columnas, la función `select()` es la indicada:
+
+```{r}
+data %>% 
+  filter(Partido=="LA LIBERTAD AVANZA") %>% 
+  select(id, Porcentaje)
+```
+
+Limpiar y transformar una base de datos es un proceso creativo que implica adaptar las variables según el uso que se le va a dar. Se dice creativo porque, si bien hay ciertas funciones y procesos frecuentes, varía mucho según cada proyecto y origen de la base. `mutate()` es una de las funciones más importantes para este momento.
+
+```{r}
+data %>% 
+  mutate(provincia_minusc = str_to_lower(id),
+         participacion_v2 = as.numeric(Votantes) / as.numeric(Electores) * 100) %>% 
+  select(id, provincia_minusc, Participacion, participacion_v2)
+```
+
+A veces es necesario hacer cálculos de agrupamiento en nuestras tablas. Las funciones `group_by()` y `summarise()` pueden funcionar. Por ejemplo, calculemos el promedio de cada partido en las distintas provincias:
+
+```{r}
+data %>% 
+  select(Partido, Porcentaje) %>% 
+  mutate(Porcentaje = as.numeric(Porcentaje)) %>% 
+  group_by(Partido) %>% 
+  summarise(mean = mean(Porcentaje)) %>% 
+  arrange(desc(mean)) %>% 
+  mutate(mean = round(mean, 2))
+```
+
+> Tip: mantené los nombres de variables simples, sin espacios y con mayúsculas/minúsculas consistentes.
+
+
+## 1.4. Formatos
+
+La mayor particularidad de los resultados electorales es tener formato **long** (largo). En el formato **long**, cada fila de la tabla representa una observación única para una combinación específica de variables. Es útil para trabajar con datos que necesitan ser agrupados o resumidos fácilmente. Cada variable está dividida en dos columnas: una para el nombre de la variable y otra para su valor. El formato alternativo es **wide**, donde cada fila representa una observación única y cada columna representa una variable diferente. Es útil cuando se necesita acceder rápidamente a las variables individuales sin necesidad de realizar transformaciones adicionales.
+
+![formatos de tabla](img/formato_tabla.png)
+
+Quizás sea más cómodo alternar entre formato *long* y *wide*. Para aquellos casos, `pivot_longer()` y `pivot_wider()` nos van a servir.
+
+Las bases electorales suelen venir en formato *long*. Para la lectura, suele ser más cómodo el formato *wide*.
+
+```{r}
+
+data_wider <- data %>%
+  select(id, Partido, Porcentaje) %>% 
+  pivot_wider(names_from=Partido, values_from=Porcentaje)
+data_wider
+```
+
+Si quisiéramos volver al formato anterior:
+
+```{r}
+data_wider %>% 
+  pivot_longer(!id, values_to="valor")
+```
+
+
+## 1.5. Visualización
+
+En este apartado nos enfocaremos en entender por qué visualizar datos y cómo construirlos utilizando `ggplot()`.
+
+::: callout-note
+### Atención
+
+La visualización de datos es parte arte y parte ciencia y, como bien dice [Claus Wilke](https://clauswilke.com/dataviz/introduction.html), el desafío es realizar correctamente el arte sin desfigurar la ciencia (y viceversa).
+:::
+
+Hay tres razones centrales por las que visualizamos la información:
+
+-   **Explorar los datos**: hay relaciones que podemos malinterpretar si sólo miramos métricas resumen.
+
+-   **Expresar relaciones complejas**: no siempre las tablas nos van a permitir ver con claridad cuando hay mucha información involucrada.
+
+-   **Comunicar**: en general, construimos información para contársela a otras personas. Probablemente sea más fácil de contar una historia con un gráfico que con una tabla, por ejemplo.
+
+:::: {.panel-tabset .nav-pills}
+### Explorar los datos
+
+Un gran ejemplo para mostrar lo importante de visualizar los datos es el llamado **Cuarteto de Anscombe**.
+
+![](img/cuarteto_anscombe.jpg)
+
+### Expresar relaciones complejas
+
+Hans Rosling fundó el proyecto [Gapminder](https://www.gapminder.org/tools/#$chart-type=bubbles&url=v2) y popularizó la siguiente visualización. [Aquí está disponible con la explicación del autor](https://www.youtube.com/watch?v=dfa7B8LPGOE).
+
+![](img/gapminder.png)
+
+### Comunicar
+
+::: {#fig-inscriptos}
+Dos ejemplos de visualizaciones que tienen muy en claro qué es lo que quieren comunicar.  
+Una disposición de la información que acompaña y refuerza el mensaje.
+
+:::: columns
+::: column{width="50%"}
+![](img/inscriptos_uba_gral.png){#fig-gral}
+:::
+::: column{width="50%"}
+![](img/inscriptos_uba_socio.png){#fig-socio}
+:::
+::::
+
+Fuente: [Chequeado](https://chequeado.com/el-explicador/carreras-universitarias-en-los-ultimos-7-anos-hay-cada-vez-mas-inscriptos-en-exactas-medicina-e-ingenieria-y-cada-vez-menos-en-sociales/)
+:::
+::::
+
+La librería estrella de la visualización en `Tidyverse` funciona a través de **capas**. Cada una se corresponde con funciones diferentes dentro de la visualización.
+
+![](img/ggplot_esquema.png)
+
+```{r}
+data %>% 
+  filter(Partido=="LA LIBERTAD AVANZA") %>% 
+  mutate(Porcentaje = as.numeric(Porcentaje)) %>% 
+  ggplot(aes(y=id, x=Porcentaje)) + # con ggplot se asigna un lienzo en blanco, con aes se asignan variables a elementos de los gráficos
+  geom_col() # definimos el gráfico a utilizar
+```
+
+Vamos a acomodar la parte estética.
+
+```{r}
+data %>% 
+  filter(Partido=="LA LIBERTAD AVANZA") %>% 
+  mutate(Porcentaje = as.numeric(Porcentaje),
+         Porcentaje = round(Porcentaje,1)) %>% 
+  ggplot(aes(y=reorder(id, Porcentaje), x=Porcentaje, fill=Porcentaje, label=Porcentaje)) + 
+  geom_col(show.legend=FALSE)+
+  geom_text(aes(x=Porcentaje+2), size=3) + 
+  labs(x="", y="", 
+       title="Votos de La Libertad Avanza (%) por provincia", 
+       subtitle="Elecciones generales 2023", 
+       caption="Elaboración propia según datos de datacp.ar")+
+  theme_minimal()+
+  scale_fill_distiller(palette = "Purples", direction = 1)
+```
+
+
+## 🧪 Práctica corta (15 minutos)
+
+Elegir y resolver alguna de las siguientes consignas. De mayor a menor dificultad.
+
+-   Graficar el porcentaje de voto a Unión por la Patria por provincia (considerar la coherencia con la paleta de colores).
+-   Graficar los votos absolutos a La Libertad Avanza por provincia.
+-   Graficar la suma entre el voto a La Libertad Avanza y Juntos por el Cambio, pensando en la alianza posterior en el balotaje.
+
+
+## 1.6. Información geográfica
+
+Hay distintos formatos para los archivos geográficos. Los más conocidos son `Shapefile` (compuesto por varios archivos con distintos atributos) y `GeoJSON` (archivo de texto). Lo particular de este tipo de archivos es la columna de `geometry`.
+
+Cargamos librería `sf`.
+
+```{r}
+library(sf)
+```
+
+Cargamos el archivo con información geográfica de las provincias. Al cargar se imprime la metadata.
+```{r}
+geo <- st_read(params$ruta_shp)
+```
+Vemos el tipo de objeto.
+```{r}
+geo %>% class() 
+```
+
+Primeras filas.
+```{r}
+geo %>% head(3)
+```
+
+
+
+
+La misma librería `ggplot` nos permite graficar archivos geográficos.
+
+```{r}
+geo %>%
+  ggplot() +
+  geom_sf()
+```
+
+El sistema de coordenadas de referencia (CRS por sus siglas en inglés) es la traducción entre los rasgos geográficos presentes en la superficie tridimensional esférica (la Tierra) y el plano donde mostramos la información geográfica. El más conocido es latitud y longitud (como se ve en el gráfico de arriba). Para poder trabajar con distintos archivos geográficos deberíamos tenerlos todos en un mismo sistema de coordenadas.
+
+```{r}
+geo %>% st_crs()
+```
+
+Se podrían transformar las coordenadas geográficas.
+
+::: {.panel-tabset .nav-pills}
+### EPSG:4326
+WGS84. El más usado a nivel global (Google Earth, GPS, datos crudos). 
+```{r}
+lista_crs <- c(4326, 3857, 5347, 3035)
+geo %>% 
+  st_transform(lista_crs[1]) %>% 
+  ggplot()+
+  geom_sf()
+```
+
+### EPSG:3857
+Mercator. Usado en mapas en la web (Google Maps, OpenStreetMap). Conserva formas locales pero distorsiona áreas (sobre todo en altas latitudes).
+```{r}
+geo %>% 
+  st_transform(lista_crs[2]) %>% 
+  ggplot()+
+  geom_sf()
+
+'ruta <- "https://raw.githubusercontent.com/martynafford/natural-earth-geojson/refs/heads/master/10m/cultural/ne_10m_admin_0_countries.json"
+st_read(ruta) %>% 
+  st_transform(lista_crs[2]) %>% 
+  ggplot()+geom_sf()'
+```
+
+### EPSG:5347
+POSGAR 2007. Oficial en Argentina. 
+```{r}
+geo %>% 
+  st_transform(lista_crs[3]) %>% 
+  ggplot()+
+  geom_sf()
+```
+
+### EPSG:3035
+ETRS89 / LAE Europe. Uso en estadísticas y análisisc omparativos a nivel europeo. Conserva áreas (útil para cálculos de densidad, cobertura, etc.).
+```{r}
+geo %>% 
+  st_transform(lista_crs[4]) %>% 
+  ggplot()+
+  geom_sf()
+```
+:::
+
+Hay tres tipos principales de objetos geográficos. Puntos (conjunto de coordenadas), líneas (conjunto de puntos) y polígonos (conjunto de líneas conectadas que forman un objeto cerrado). Carguemos archivos de esos tipos para poder verlos en el mapa. 
+
+```{r}
+ruta_puntos <- "https://wms.ign.gob.ar/geoserver/ign/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=ign%3Agobiernoslocales_2022&outputFormat=application%2Fjson"
+geo_goblocales <- st_read(ruta_puntos, quiet=TRUE)
+geo_goblocales %>% head(5)
+```
+
+
+```{r}
+ruta_lineas <- "https://wms.ign.gob.ar/geoserver/ign/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=ign%3Alinea_de_limite_070114&outputFormat=application%2Fjson"
+geo_areasprotegidas <- st_read(ruta_lineas, quiet=TRUE)
+geo_areasprotegidas %>% head(5)
+```
+
+Veamoslo gráficamente.
+```{r}
+ggplot() +
+  geom_sf(data = geo, aes(color = "Provincias")) +
+  geom_sf(data = geo_goblocales, aes(color = "Gobiernos locales"), alpha = .1) +
+  geom_sf(data = geo_areasprotegidas, aes(color = "Áreas protegidas")) +
+  coord_sf(
+    xlim = c(-75, -52),  # longitudes aprox de Argentina continental
+    ylim = c(-58, -20),  # latitudes aprox de Argentina continental
+    expand = FALSE
+  ) +
+  scale_color_manual(
+    name = "Capas",  
+    values = c(
+      "Provincias" = "black",
+      "Gobiernos locales" = "blue",
+      "Áreas protegidas" = "red"
+    )
+  ) +
+  theme_void()
+```
+
+Volviendo al mundo electoral. Una vez que tenemos la información geográfica y los datos que queremos graficar, necesitamos unir ambos objetos. Para ello, necesitaremos una *clave*, esto es, una variable que sea igual en ambas tablas como para realizar la unión.
+
+```{r}
+data %>% distinct(id) %>% arrange(id) %>% as.vector() %>% print()
+
+geo %>% st_drop_geometry() %>% distinct(NAM) %>% arrange(NAM) %>% as.vector() %>% print()
+```
+
+Vamos a transformar los textos para que coincidan entre sí. 
+
+```{r}
+geo <- geo %>% 
+  mutate(key = str_to_upper(NAM), 
+         key = stringi::stri_trans_general(key, "Latin-ASCII"), 
+         key = str_replace(key, ", ANTARTIDA E ISLAS DEL ATLANTICO SUR", "")) %>% 
+  select(key, geometry)
+
+geo %>% st_drop_geometry() %>% distinct(key) %>% arrange(key) %>% as.vector() %>% print()
+
+```
+
+
+```{r}
+joined <- data %>% 
+  filter(Partido == "LA LIBERTAD AVANZA") %>% 
+  mutate(key = id,
+         Porcentaje = as.numeric(Porcentaje), 
+         label = round(Porcentaje)) %>% 
+  select(key, Porcentaje, label) %>% 
+  left_join(geo) %>% 
+  st_as_sf()
+
+joined %>% head()
+```
+
+Finalmente graficamos el resultado de La Libertad Avanza por provincia en un mapa de la Argentina. 
+
+```{r}
+joined %>% 
+  ggplot()+
+  geom_sf(aes(fill=Porcentaje)) +
+  coord_sf(
+    xlim = c(-75, -52),  # longitudes aprox de Argentina continental
+    ylim = c(-58, -20),  # latitudes aprox de Argentina continental
+    expand = FALSE
+  ) +
+  scale_fill_distiller(palette = "Purples", direction = 1) + 
+  labs(x="", y="", fill="%",
+       title="La Libertad Avanza", 
+       subtitle="Votos en las elecciones generales 2023", 
+       caption="Elaboración propia según datos de datacp.ar")+
+  theme_void()
+```
+
+------------------------------------------------------------------------
+
+## 🧩 Para seguir practicando
+
+-   Hacer un mapa con resultados de otra fuerza.
+-   Hacer un mapa graficando la participación. 
+-   Hacer un mapa de resultados tomando sólo de la Patagonia argentina.
+
+------------------------------------------------------------------------
