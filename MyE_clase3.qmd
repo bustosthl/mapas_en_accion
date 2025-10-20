@@ -29,7 +29,7 @@ params:
 
 ## 3. Es más complejo
 
-En este encuentro se buscará incorporar instrumentos más avanzados al momento de visualizar información geográfica. 
+En este encuentro se buscará incorporar instrumentos más avanzados al momento de visualizar información geográfica.
 
 ## 3.1. Pregunta-problema
 
@@ -51,6 +51,7 @@ res <- readxl::read_excel(params$ruta_pba)
 
 dim(res)
 ```
+
 ```{r}
 geo <- st_read(params$ruta_partidos) %>% 
   mutate(id = paste0("BUENOS AIRES_",str_to_upper(nam)), 
@@ -60,8 +61,8 @@ geo <- st_read(params$ruta_partidos) %>%
 geo %>% ggplot()+geom_sf()
 ```
 
-
 Chequamos claves de unión.
+
 ```{r}
 geo_check <- geo %>% st_drop_geometry() %>% select(id) %>% distinct(id) %>% mutate(base_geo=1)
 
@@ -76,6 +77,7 @@ geo_check
 ```
 
 Reemplazamos y unimos.
+
 ```{r}
 geo <- geo %>% 
   mutate(id = str_replace(id, "BUENOS AIRES_NUEVE DE JULIO", "BUENOS AIRES_9 DE JULIO"),
@@ -114,7 +116,7 @@ main_plot <- df %>%
 main_plot
 ```
 
-El mapa anterior tiene una complicación: el conurbano bonaerense, que alberga dos tercios de la población de la provincia, casi no se aprecia en la figura. Es subsanable con la incorporación de minimapas. Un pequeño rodeo: la delimitación de lo que llamamos *conurbano* es una discusión con múltiples aristas y criterios. Aquí, sólo para evadirla prácticamente, tomaremos un recorte que habilita la división de *secciones provinciales* de la Provincia de Buenos Aires. Definiremos al conurbano como la primera y tercera sección provincial. 
+El mapa anterior tiene una complicación: el conurbano bonaerense, que alberga dos tercios de la población de la provincia, casi no se aprecia en la figura. Es subsanable con la incorporación de minimapas. Un pequeño rodeo: la delimitación de lo que llamamos *conurbano* es una discusión con múltiples aristas y criterios. Aquí, sólo para evadirla prácticamente, tomaremos un recorte que habilita la división de *secciones provinciales* de la Provincia de Buenos Aires. Definiremos al conurbano como la primera y tercera sección provincial.
 
 ```{r}
 equi <- readxl::read_excel(params$ruta_equi, sheet="pba_seccprov")
@@ -122,6 +124,7 @@ head(equi)
 ```
 
 Tenemos un problema de compatibilidad de tipos. En este caso, nos conviene utilizar números.
+
 ```{r}
 # df %>% left_join(equi, by=c("cde"="municipio_id"))
 ```
@@ -134,7 +137,7 @@ df <- df %>%
   left_join(equi, by="municipio_id")
 ```
 
-Con `patchwork` podemos unir ambos mapas en un mismo eje. 
+Con `patchwork` podemos unir ambos mapas en un mismo eje.
 
 ```{r}
 library(patchwork)
@@ -160,7 +163,7 @@ main_plot + inset_element(zoom_plot, left = .92, bottom = .52, right = 1.6, top 
 
 ### ¡Necesito contexto!
 
-Instalamos `ggspatial` para agregar mapas base. 
+Instalamos `ggspatial` para agregar mapas base.
 
 ```{r}
 #install.packages("ggspatial")
@@ -169,7 +172,7 @@ Instalamos `ggspatial` para agregar mapas base.
 library(ggspatial)
 ```
 
-El argumento `annotation_*` nos va a permitir agregar ciertos elementos al gráfico de `ggplot`. 
+El argumento `annotation_*` nos va a permitir agregar ciertos elementos al gráfico de `ggplot`.
 
 ```{r}
 df %>% 
@@ -190,7 +193,8 @@ df %>%
 
 ```
 
-El argumento *zoom* nos permite trabajar sobre la calidad del mapa que presentamos. Un número mayor implica más tiempo de procesamiento. 
+El argumento *zoom* nos permite trabajar sobre la calidad del mapa que presentamos. Un número mayor implica más tiempo de procesamiento.
+
 ```{r}
 df %>% 
   filter(Partido == "UNION POR LA PATRIA") %>% 
@@ -234,14 +238,15 @@ df %>%
 
 ### Mapas interactivos con `leaflet`
 
-Ante todo, se instala y carga la librería. `leaflet` es una librería basada en `JavaScript` y es ampliamente utilizada en distintos lenguajes de programación para producir mapas interactivos. 
+Ante todo, se instala y carga la librería. `leaflet` es una librería basada en `JavaScript` y es ampliamente utilizada en distintos lenguajes de programación para producir mapas interactivos.
 
 ```{r}
 #install.packages("leaflet")
 library(leaflet)
 ```
 
-Calculemos el centroide de Buenos Aires. 
+Calculemos el centroide de Buenos Aires.
+
 ```{r}
 sf_use_s2(FALSE)
 centroide <- df %>%
@@ -254,7 +259,8 @@ centroide <- df %>%
 
 centroide
 ```
-`leaflet` sostiene la sintaxis de `ggplot`. Facilita su uso. 
+
+`leaflet` sostiene la sintaxis de `ggplot`. Facilita su uso.
 
 ```{r}
 leaflet() %>%
@@ -264,6 +270,7 @@ leaflet() %>%
 ```
 
 También permite trabajar con *dataframes*.
+
 ```{r}
 municipios <- c(6574, 6357, 6056, 6490)
 
@@ -290,7 +297,7 @@ m <- leaflet(df_filtrado) %>%
 m
 ```
 
-Repliquemos el mapa cloroplético. 
+Repliquemos el mapa cloroplético.
 
 ```{r}
 # paleta de colores
@@ -321,19 +328,16 @@ m <- leaflet(df_filtrado) %>%
 m
 ```
 
-
-
 ## 🧪 Práctica corta (15 minutos)
 
-Elegir y resolver alguna de las siguientes consignas. 
+Elegir y resolver alguna de las siguientes consignas.
 
--   Graficar en mapa de la provincia de Buenos Aires con los resultados de Juntos por el Cambio, eligiendo una paleta de colores apropiada. Agregar un minimapa haciendo zoom en la sección provincial donde mejores resultados tuvo. 
+-   Graficar en mapa de la provincia de Buenos Aires con los resultados de Juntos por el Cambio, eligiendo una paleta de colores apropiada. Agregar un minimapa haciendo zoom en la sección provincial donde mejores resultados tuvo.
 -   Probar un mapa interactivo de los resultados de LLA pero cambiando el mapa de fondo. ¿Qué otra información se puede agregar al popup?
-
 
 ## 3.3. Mapas bivariados
 
-Hay momentos donde, para comprender la información, es necesario sumar variables. En el mundo electoral para entender resultados globales (a nivel provincia en este caso) siempre es útil ver Votos en absolutos y/o electores por cada departamento. 
+Hay momentos donde, para comprender la información, es necesario sumar variables. En el mundo electoral para entender resultados globales (a nivel provincia en este caso) siempre es útil ver Votos en absolutos y/o electores por cada departamento.
 
 ```{r}
 plot_porcentaje <- df_filtrado %>%
@@ -355,7 +359,7 @@ plot_votos <- df_filtrado %>%
 plot_porcentaje + plot_votos
 ```
 
-Visualmente podría representarse ambas variables a través de los mapas bivariados. 
+Visualmente podría representarse ambas variables a través de los mapas bivariados.
 
 ```{r}
 #install.packages("biscale")
@@ -412,7 +416,8 @@ df15 <- readxl::read_excel(params$ruta_pba_b15) %>%
 
 dim(df15)
 ```
-Una mínima limpieza. Construir la variable de ganador, pasar la geometría a puntos y agregar las coordenadas como variables.
+
+Veamos el partido ganador por cada departamento.
 
 ```{r}
 #colores de partidos
@@ -429,7 +434,7 @@ df15 %>%
   theme_void()
 ```
 
-Existe un efecto visual dado por la relación entre las áreas de los polígonos y los ganadores: parece que *CAMBIEMOS* obtuvo más votos. 
+Existe un efecto visual dado por la relación entre las áreas de los polígonos y los ganadores: parece que *CAMBIEMOS* obtuvo más votos.
 
 ```{r}
 df15 %>% 
@@ -475,23 +480,7 @@ df_point %>%
   theme_void()
 ```
 
-Se puede jugar con el color, el tamaño y la intensidad.
-
-```{r}
-df_point %>% 
-  distinct(id, .keep_all = T) %>% 
-  ggplot()+
-  geom_sf(aes(fill = ganador, size = Porcentaje),
-          shape = 21, alpha = 0.5) +
-  scale_fill_manual(values=colores, name="ganador")+
-  geom_sf(data=geo_prov, alpha=0)+
-  labs(title="Ganador por departamento",
-       subtitle="Elecciones presidenciales G2015")+
-  theme_void()
-
-```
-
-
+Cambiemos el formato y construyamos una variable de brecha para poder incluir más atributos en la visualización.
 
 ```{r}
 df_point <- readxl::read_excel(params$ruta_pba_b15) %>% 
@@ -515,7 +504,7 @@ df_point <- readxl::read_excel(params$ruta_pba_b15) %>%
 df_point
 ```
 
-xx
+Se puede jugar con el color, el tamaño y la intensidad.
 
 ```{r}
 df_point %>% 
@@ -529,7 +518,7 @@ df_point %>%
   theme_void()
 ```
 
-xx
+Existe un gráfico que permite dibujar burbujas y evitar la superposición entre ellas. Nos va a permitir apreciar mejor gráficos como el anterior. La inspiración típica de este caso son las elecciones estadounidenses.
 
 ```{r}
 library(cartogram)
@@ -576,12 +565,8 @@ La inspiración viene de aquí:
 
 ## 🧩 Para seguir practicando
 
--   Graficar la diferencia del peronismo entre 2025 y 2023.
--   Graficar ganador de las elecciones 2023 pero a nivel región. 
--   Graficar la diferencia de La Libertad Avanza entre 2025 y 2023 utilizando una paleta divergente pero con sus valores clasificados en 3 o 5 grupos.
+-   Graficar un mapa interactivo con información a menor nivel que sección electoral. Puede ser circuitos electorales o radios censales.
+-   Graficar un mapa bivariado pero con dos partidos que puedan resultar complementarios. Se podría probar a nivel nacional con LLA y JXC en las elecciones G2023, pensando en la segunda vuelta.
+-   Pensar otro caso donde puede ser útil la técnica *Dorling Cartogram* y aplicarla.
 
 ------------------------------------------------------------------------
-
-
-
-
