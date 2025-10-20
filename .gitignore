@@ -1,5 +1,6 @@
-.Rproj.user
-.Rhistory
-.RData
-.Ruserdata
-.RDataTmp
+/.RData
+/.Ruserdata
+/.RDataTmp
+/.Rhistory
+/.Rproj.user
+/rosm.cache
