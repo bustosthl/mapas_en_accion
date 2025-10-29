@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ---
 title: "1 - calentando motores"
 author: "Tomás Bustos"
