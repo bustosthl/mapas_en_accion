@@ -20,7 +20,7 @@ params:
 
 # Mapas & elecciones: visualización de información geográfica con R en Ciencias Sociales
 
-El objetivo del curso es adquirir herramientas para la visualización de información geográfica utilizando R en el ámbito de las Ciencias Sociales. Se utilizarán datos electorales como un ejemplo concreto y cercano, un hilo temático que le dará estructura, coherencia e integridad a los encuentros. Habrá contenidos de tres tipos: *manejo de datos*, *herramientas de visualización* y *un ejemplo concreto* donde lo anterior esté aplicado. La idea es ir avanzando de manera iterativa, pasando en todas los encuentros por los tres tipos de contenidos mencionados antes e ir complejizando su utilziación a medida que avanzan los encuentros. 
+El objetivo del curso es adquirir herramientas para la visualización de información geográfica utilizando R en el ámbito de las Ciencias Sociales. Se utilizarán datos electorales como un ejemplo concreto y cercano, un hilo temático que le dará estructura, coherencia e integridad a los encuentros. Habrá contenidos de tres tipos: *manejo de datos*, *herramientas de visualización* y *un ejemplo concreto* donde lo anterior esté aplicado. La idea es ir avanzando de manera iterativa, pasando en todas los encuentros por los tres tipos de contenidos mencionados antes e ir complejizando su utilziación a medida que avanzan los encuentros.
 
 Como herramienta didáctica, cada encuentro tendrá una *pregunta que nos guíe*. Es importante para evitar perdernos en el mar de información disponible. Enfocar los esfuerzos nos va a ayudar a buscar mejor qué función necesitamos para responder nuestra pregunta y además valoriza uno de los elementos más importantes que tienen para aportar las Ciencias Sociales al mundo de datos: *hacer preguntas interesantes*.
 
@@ -50,11 +50,9 @@ Un breve y necesario paréntesis de definiciones de los elementos con los que va
 
 -   **Paquete/Librerías**: conjunto de funciones, en general, con el objetivo de trabajar en un rubro en particular o con cierto tipo de datos.
 
-
 ## 1.2. Pregunta-problema
 
 Por ser el primer encuentro vamos a empezar por una pregunta sencilla. ¿Cómo fue el porcentaje de votos de La Libertad Avanza en las provincias argentinas en las elecciones presidenciales generales de 2023?
-
 
 ## 1.3. Introducción a toda marcha
 
@@ -148,7 +146,6 @@ data %>%
 
 > Tip: mantené los nombres de variables simples, sin espacios y con mayúsculas/minúsculas consistentes.
 
-
 ## 1.4. Formatos
 
 La mayor particularidad de los resultados electorales es tener formato **long** (largo). En el formato **long**, cada fila de la tabla representa una observación única para una combinación específica de variables. Es útil para trabajar con datos que necesitan ser agrupados o resumidos fácilmente. Cada variable está dividida en dos columnas: una para el nombre de la variable y otra para su valor. El formato alternativo es **wide**, donde cada fila representa una observación única y cada columna representa una variable diferente. Es útil cuando se necesita acceder rápidamente a las variables individuales sin necesidad de realizar transformaciones adicionales.
@@ -174,7 +171,6 @@ data_wider %>%
   pivot_longer(!id, values_to="valor")
 ```
 
-
 ## 1.5. Visualización
 
 En este apartado nos enfocaremos en entender por qué visualizar datos y cómo construirlos utilizando `ggplot()`.
@@ -193,7 +189,7 @@ Hay tres razones centrales por las que visualizamos la información:
 
 -   **Comunicar**: en general, construimos información para contársela a otras personas. Probablemente sea más fácil de contar una historia con un gráfico que con una tabla, por ejemplo.
 
-:::: {.panel-tabset .nav-pills}
+::::::: {.panel-tabset .nav-pills}
 ### Explorar los datos
 
 Un gran ejemplo para mostrar lo importante de visualizar los datos es el llamado **Cuarteto de Anscombe**.
@@ -208,22 +204,23 @@ Hans Rosling fundó el proyecto [Gapminder](https://www.gapminder.org/tools/#$ch
 
 ### Comunicar
 
-::: {#fig-inscriptos}
-Dos ejemplos de visualizaciones que tienen muy en claro qué es lo que quieren comunicar.  
+:::::: {#fig-inscriptos}
+Dos ejemplos de visualizaciones que tienen muy en claro qué es lo que quieren comunicar.\
 Una disposición de la información que acompaña y refuerza el mensaje.
 
-:::: columns
+::::: columns
 ::: column{width="50%"}
 ![](img/inscriptos_uba_gral.png){#fig-gral}
 :::
+
 ::: column{width="50%"}
 ![](img/inscriptos_uba_socio.png){#fig-socio}
 :::
-::::
+:::::
 
 Fuente: [Chequeado](https://chequeado.com/el-explicador/carreras-universitarias-en-los-ultimos-7-anos-hay-cada-vez-mas-inscriptos-en-exactas-medicina-e-ingenieria-y-cada-vez-menos-en-sociales/)
-:::
-::::
+::::::
+:::::::
 
 La librería estrella de la visualización en `Tidyverse` funciona a través de **capas**. Cada una se corresponde con funciones diferentes dentro de la visualización.
 
@@ -255,7 +252,6 @@ data %>%
   scale_fill_distiller(palette = "Purples", direction = 1)
 ```
 
-
 ## 🧪 Práctica corta (15 minutos)
 
 Elegir y resolver alguna de las siguientes consignas. De mayor a menor dificultad.
@@ -263,7 +259,6 @@ Elegir y resolver alguna de las siguientes consignas. De mayor a menor dificulta
 -   Graficar el porcentaje de voto a Unión por la Patria por provincia (considerar la coherencia con la paleta de colores).
 -   Graficar los votos absolutos a La Libertad Avanza por provincia.
 -   Graficar la suma entre el voto a La Libertad Avanza y Juntos por el Cambio, pensando en la alianza posterior en el balotaje.
-
 
 ## 1.6. Información geográfica
 
@@ -276,21 +271,22 @@ library(sf)
 ```
 
 Cargamos el archivo con información geográfica de las provincias. Al cargar se imprime la metadata.
+
 ```{r}
 geo <- st_read(params$ruta_shp)
 ```
+
 Vemos el tipo de objeto.
+
 ```{r}
 geo %>% class() 
 ```
 
 Primeras filas.
+
 ```{r}
 geo %>% head(3)
 ```
-
-
-
 
 La misma librería `ggplot` nos permite graficar archivos geográficos.
 
@@ -310,7 +306,9 @@ Se podrían transformar las coordenadas geográficas.
 
 ::: {.panel-tabset .nav-pills}
 ### EPSG:4326
-WGS84. El más usado a nivel global (Google Earth, GPS, datos crudos). 
+
+WGS84. El más usado a nivel global (Google Earth, GPS).
+
 ```{r}
 lista_crs <- c(4326, 3857, 5347, 3035)
 geo %>% 
@@ -320,7 +318,9 @@ geo %>%
 ```
 
 ### EPSG:3857
+
 Mercator. Usado en mapas en la web (Google Maps, OpenStreetMap). Conserva formas locales pero distorsiona áreas (sobre todo en altas latitudes).
+
 ```{r}
 geo %>% 
   st_transform(lista_crs[2]) %>% 
@@ -334,7 +334,9 @@ st_read(ruta) %>%
 ```
 
 ### EPSG:5347
-POSGAR 2007. Oficial en Argentina. 
+
+POSGAR 2007. Oficial en Argentina.
+
 ```{r}
 geo %>% 
   st_transform(lista_crs[3]) %>% 
@@ -343,7 +345,9 @@ geo %>%
 ```
 
 ### EPSG:3035
+
 ETRS89 / LAE Europe. Uso en estadísticas y análisisc omparativos a nivel europeo. Conserva áreas (útil para cálculos de densidad, cobertura, etc.).
+
 ```{r}
 geo %>% 
   st_transform(lista_crs[4]) %>% 
@@ -352,14 +356,13 @@ geo %>%
 ```
 :::
 
-Hay tres tipos principales de objetos geográficos. Puntos (conjunto de coordenadas), líneas (conjunto de puntos) y polígonos (conjunto de líneas conectadas que forman un objeto cerrado). Carguemos archivos de esos tipos para poder verlos en el mapa. 
+Hay tres tipos principales de objetos geográficos. Puntos (conjunto de coordenadas), líneas (conjunto de puntos) y polígonos (conjunto de líneas conectadas que forman un objeto cerrado). Carguemos archivos de esos tipos para poder verlos en el mapa.
 
 ```{r}
 ruta_puntos <- "https://wms.ign.gob.ar/geoserver/ign/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=ign%3Agobiernoslocales_2022&outputFormat=application%2Fjson"
 geo_goblocales <- st_read(ruta_puntos, quiet=TRUE)
 geo_goblocales %>% head(5)
 ```
-
 
 ```{r}
 ruta_lineas <- "https://wms.ign.gob.ar/geoserver/ign/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=ign%3Alinea_de_limite_070114&outputFormat=application%2Fjson"
@@ -368,6 +371,7 @@ geo_areasprotegidas %>% head(5)
 ```
 
 Veamoslo gráficamente.
+
 ```{r}
 ggplot() +
   geom_sf(data = geo, aes(color = "Provincias")) +
@@ -397,7 +401,7 @@ data %>% distinct(id) %>% arrange(id) %>% as.vector() %>% print()
 geo %>% st_drop_geometry() %>% distinct(NAM) %>% arrange(NAM) %>% as.vector() %>% print()
 ```
 
-Vamos a transformar los textos para que coincidan entre sí. 
+Vamos a transformar los textos para que coincidan entre sí.
 
 ```{r}
 geo <- geo %>% 
@@ -409,7 +413,6 @@ geo <- geo %>%
 geo %>% st_drop_geometry() %>% distinct(key) %>% arrange(key) %>% as.vector() %>% print()
 
 ```
-
 
 ```{r}
 joined <- data %>% 
@@ -424,7 +427,7 @@ joined <- data %>%
 joined %>% head()
 ```
 
-Finalmente graficamos el resultado de La Libertad Avanza por provincia en un mapa de la Argentina. 
+Finalmente graficamos el resultado de La Libertad Avanza por provincia en un mapa de la Argentina.
 
 ```{r}
 joined %>% 
@@ -448,11 +451,11 @@ joined %>%
 ## 🧩 Para seguir practicando
 
 -   Hacer un mapa con resultados de otra fuerza.
--   Hacer un mapa graficando la participación. 
+-   Hacer un mapa graficando la participación.
 -   Hacer un mapa de resultados tomando sólo de la Patagonia argentina.
 
-------------------------------------------------------------------------
-=======
+# ------------------------------------------------------------------------
+
 ---
 title: "Mapas en acción. Calentando motores"
 author: "Tomás Bustos"
@@ -476,7 +479,7 @@ params:
 
 # Mapas en acción: Análisis y visualización espacial con R
 
-El objetivo del curso es adquirir herramientas para la visualización de información geográfica utilizando R en el ámbito de las Ciencias Sociales. Se utilizarán datos electorales como un ejemplo concreto y cercano, un hilo temático que le dará estructura, coherencia e integridad a los encuentros. Habrá contenidos de tres tipos: *manejo de datos*, *herramientas de visualización* y *un ejemplo concreto* donde lo anterior esté aplicado. La idea es ir avanzando de manera iterativa, pasando en todas los encuentros por los tres tipos de contenidos mencionados antes e ir complejizando su utilziación a medida que avanzan los encuentros. 
+El objetivo del curso es adquirir herramientas para la visualización de información geográfica utilizando R en el ámbito de las Ciencias Sociales. Se utilizarán datos electorales como un ejemplo concreto y cercano, un hilo temático que le dará estructura, coherencia e integridad a los encuentros. Habrá contenidos de tres tipos: *manejo de datos*, *herramientas de visualización* y *un ejemplo concreto* donde lo anterior esté aplicado. La idea es ir avanzando de manera iterativa, pasando en todas los encuentros por los tres tipos de contenidos mencionados antes e ir complejizando su utilziación a medida que avanzan los encuentros.
 
 Como herramienta didáctica, cada encuentro tendrá una *pregunta que nos guíe*. Es importante para evitar perdernos en el mar de información disponible. Enfocar los esfuerzos nos va a ayudar a buscar mejor qué función necesitamos para responder nuestra pregunta y además valoriza uno de los elementos más importantes que tienen para aportar las Ciencias Sociales al mundo de datos: *hacer preguntas interesantes*.
 
@@ -506,11 +509,9 @@ Un breve y necesario paréntesis de definiciones de los elementos con los que va
 
 -   **Paquete/Librerías**: conjunto de funciones, en general, con el objetivo de trabajar en un rubro en particular o con cierto tipo de datos.
 
-
 ## 1.2. Pregunta-problema
 
 Por ser el primer encuentro vamos a empezar por una pregunta sencilla. ¿Cómo fue el porcentaje de votos de La Libertad Avanza en las provincias argentinas en las elecciones presidenciales generales de 2023?
-
 
 ## 1.3. Introducción a toda marcha
 
@@ -604,7 +605,6 @@ data %>%
 
 > Tip: mantené los nombres de variables simples, sin espacios y con mayúsculas/minúsculas consistentes.
 
-
 ## 1.4. Formatos
 
 La mayor particularidad de los resultados electorales es tener formato **long** (largo). En el formato **long**, cada fila de la tabla representa una observación única para una combinación específica de variables. Es útil para trabajar con datos que necesitan ser agrupados o resumidos fácilmente. Cada variable está dividida en dos columnas: una para el nombre de la variable y otra para su valor. El formato alternativo es **wide**, donde cada fila representa una observación única y cada columna representa una variable diferente. Es útil cuando se necesita acceder rápidamente a las variables individuales sin necesidad de realizar transformaciones adicionales.
@@ -630,7 +630,6 @@ data_wider %>%
   pivot_longer(!id, values_to="valor")
 ```
 
-
 ## 1.5. Visualización
 
 En este apartado nos enfocaremos en entender por qué visualizar datos y cómo construirlos utilizando `ggplot()`.
@@ -649,7 +648,7 @@ Hay tres razones centrales por las que visualizamos la información:
 
 -   **Comunicar**: en general, construimos información para contársela a otras personas. Probablemente sea más fácil de contar una historia con un gráfico que con una tabla, por ejemplo.
 
-:::: {.panel-tabset .nav-pills}
+::::::: {.panel-tabset .nav-pills}
 ### Explorar los datos
 
 Un gran ejemplo para mostrar lo importante de visualizar los datos es el llamado **Cuarteto de Anscombe**.
@@ -664,22 +663,25 @@ Hans Rosling fundó el proyecto [Gapminder](https://www.gapminder.org/tools/#$ch
 
 ### Comunicar
 
-::: {#fig-inscriptos}
-Dos ejemplos de visualizaciones que tienen muy en claro qué es lo que quieren comunicar.  
+<div>
+
+Dos ejemplos de visualizaciones que tienen muy en claro qué es lo que quieren comunicar.\
 Una disposición de la información que acompaña y refuerza el mensaje.
 
-:::: columns
+::::: columns
 ::: column{width="50%"}
-![](img/inscriptos_uba_gral.png){#fig-gral}
+![](img/inscriptos_uba_gral.png)
 :::
+
 ::: column{width="50%"}
-![](img/inscriptos_uba_socio.png){#fig-socio}
+![](img/inscriptos_uba_socio.png)
 :::
-::::
+:::::
 
 Fuente: [Chequeado](https://chequeado.com/el-explicador/carreras-universitarias-en-los-ultimos-7-anos-hay-cada-vez-mas-inscriptos-en-exactas-medicina-e-ingenieria-y-cada-vez-menos-en-sociales/)
-:::
-::::
+
+</div>
+:::::::
 
 La librería estrella de la visualización en `Tidyverse` funciona a través de **capas**. Cada una se corresponde con funciones diferentes dentro de la visualización.
 
@@ -711,7 +713,6 @@ data %>%
   scale_fill_distiller(palette = "Purples", direction = 1)
 ```
 
-
 ## 🧪 Práctica corta (15 minutos)
 
 Elegir y resolver alguna de las siguientes consignas. De mayor a menor dificultad.
@@ -719,7 +720,6 @@ Elegir y resolver alguna de las siguientes consignas. De mayor a menor dificulta
 -   Graficar el porcentaje de voto a Unión por la Patria por provincia (considerar la coherencia con la paleta de colores).
 -   Graficar los votos absolutos a La Libertad Avanza por provincia.
 -   Graficar la suma entre el voto a La Libertad Avanza y Juntos por el Cambio, pensando en la alianza posterior en el balotaje.
-
 
 ## 1.6. Información geográfica
 
@@ -732,21 +732,22 @@ library(sf)
 ```
 
 Cargamos el archivo con información geográfica de las provincias. Al cargar se imprime la metadata.
+
 ```{r}
 geo <- st_read(params$ruta_shp)
 ```
+
 Vemos el tipo de objeto.
+
 ```{r}
 geo %>% class() 
 ```
 
 Primeras filas.
+
 ```{r}
 geo %>% head(3)
 ```
-
-
-
 
 La misma librería `ggplot` nos permite graficar archivos geográficos.
 
@@ -764,16 +765,17 @@ El sistema de coordenadas de referencia (CRS por sus siglas en inglés) se utili
 geo %>% st_crs()
 ```
 
-Un ejemplo. Cada proyección distorsiona algún elemento (la forma, la distancia, el área). Mercator deforma lo que está más cerca de los polos. 
+Un ejemplo. Cada proyección distorsiona algún elemento (la forma, la distancia, el área). Mercator deforma lo que está más cerca de los polos.
 
 ![](img/arg_escala.png)
-
 
 Lo importante es que todos nuestros objetos estén en el mismo sistema de coordenadas. Se pueden transformar.
 
 ::: {.panel-tabset .nav-pills}
 ### EPSG:4326
-WGS84. El más usado a nivel global (Google Earth, GPS, datos crudos). Coordenadas geográficas, trabajan en grados. 
+
+WGS84. El más usado a nivel global (Google Earth, GPS, datos crudos). Coordenadas geográficas, trabajan en grados.
+
 ```{r}
 lista_crs <- c(4326, 3857, 5347, 3035)
 geo %>% 
@@ -783,7 +785,9 @@ geo %>%
 ```
 
 ### EPSG:3857
-Mercator. Usado en mapas en la web (Google Maps, OpenStreetMap). Conserva formas locales pero distorsiona áreas (sobre todo en altas latitudes). Coordenadas proyectadas, permiten realizar cálculos. 
+
+Mercator. Usado en mapas en la web (Google Maps, OpenStreetMap). Conserva formas locales pero distorsiona áreas (sobre todo en altas latitudes). Coordenadas proyectadas, permiten realizar cálculos.
+
 ```{r}
 geo %>% 
   st_transform(lista_crs[2]) %>% 
@@ -797,7 +801,9 @@ st_read(ruta) %>%
 ```
 
 ### EPSG:5347
-POSGAR 2007. Oficial en Argentina. 
+
+POSGAR 2007. Oficial en Argentina.
+
 ```{r}
 geo %>% 
   st_transform(lista_crs[3]) %>% 
@@ -806,7 +812,9 @@ geo %>%
 ```
 
 ### EPSG:3035
+
 ETRS89 / LAE Europe. Uso en estadísticas y análisis comparativos a nivel europeo. Conserva áreas (útil para cálculos de densidad, cobertura, etc.).
+
 ```{r}
 geo %>% 
   st_transform(lista_crs[4]) %>% 
@@ -815,14 +823,13 @@ geo %>%
 ```
 :::
 
-Hay tres tipos principales de objetos geográficos. Puntos (conjunto de coordenadas), líneas (conjunto de puntos) y polígonos (conjunto de líneas conectadas que forman un objeto cerrado). Carguemos archivos de esos tipos para poder verlos en el mapa. 
+Hay tres tipos principales de objetos geográficos. Puntos (conjunto de coordenadas), líneas (conjunto de puntos) y polígonos (conjunto de líneas conectadas que forman un objeto cerrado). Carguemos archivos de esos tipos para poder verlos en el mapa.
 
 ```{r}
 ruta_puntos <- "https://wms.ign.gob.ar/geoserver/ign/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=ign%3Agobiernoslocales_2022&outputFormat=application%2Fjson"
 geo_goblocales <- st_read(ruta_puntos, quiet=TRUE)
 geo_goblocales %>% head(5)
 ```
-
 
 ```{r}
 ruta_lineas <- "https://wms.ign.gob.ar/geoserver/ign/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=ign%3Alinea_de_limite_070114&outputFormat=application%2Fjson"
@@ -831,6 +838,7 @@ geo_areasprotegidas %>% head(5)
 ```
 
 Veamoslo gráficamente.
+
 ```{r}
 ggplot() +
   geom_sf(data = geo, aes(color = "Provincias")) +
@@ -860,7 +868,7 @@ data %>% distinct(id) %>% arrange(id) %>% as.vector() %>% print()
 geo %>% st_drop_geometry() %>% distinct(NAM) %>% arrange(NAM) %>% as.vector() %>% print()
 ```
 
-Vamos a transformar los textos para que coincidan entre sí. 
+Vamos a transformar los textos para que coincidan entre sí.
 
 ```{r}
 geo <- geo %>% 
@@ -872,7 +880,6 @@ geo <- geo %>%
 geo %>% st_drop_geometry() %>% distinct(key) %>% arrange(key) %>% as.vector() %>% print()
 
 ```
-
 
 ```{r}
 joined <- data %>% 
@@ -887,7 +894,7 @@ joined <- data %>%
 joined %>% head()
 ```
 
-Finalmente graficamos el resultado de La Libertad Avanza por provincia en un mapa de la Argentina. 
+Finalmente graficamos el resultado de La Libertad Avanza por provincia en un mapa de la Argentina.
 
 ```{r}
 joined %>% 
@@ -911,8 +918,7 @@ joined %>%
 ## 🧩 Para seguir practicando
 
 -   Hacer un mapa con resultados de otra fuerza.
--   Hacer un mapa graficando la participación. 
+-   Hacer un mapa graficando la participación.
 -   Hacer un mapa de resultados tomando sólo de la Patagonia argentina.
 
 ------------------------------------------------------------------------
->>>>>>> 66e4344 (actualizacion clase 3)
