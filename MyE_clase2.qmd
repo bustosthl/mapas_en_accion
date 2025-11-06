@@ -14,7 +14,7 @@ execute:
   warning: false
   message: false
 params:
-  prov_name_col: "NOMBRE_PROVINCIA"   # Cambiá este nombre si tu shapefile usa otra columna
+  prov_name_col: "NOMBRE_PROVINCIA"   
   ruta_csv: "data/G2023_resultados_presidente.csv"
   ruta_excel: "data/G2023_resultados_presidente.xlsx"
   ruta_shp: "geo/ign_provincia/ign_provincia.shp"

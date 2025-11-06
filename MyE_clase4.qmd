@@ -1,5 +1,5 @@
 ---
-title: "Mapas en acción. Es más complejo"
+title: "Mapas en acción. Analítica avanzada"
 author: "Tomás Bustos"
 format:
   html:
@@ -14,8 +14,8 @@ execute:
   warning: false
   message: false
 params:
-  prov_name_col: "NOMBRE_PROVINCIA"   # Cambiá este nombre si tu shapefile usa otra columna
-  ruta_csv: "data/G2023_resultados_presidente.csv"
+  prov_name_col: "NOMBRE_PROVINCIA"   
+  ruta_circuitos_caba: "geo/circuitos-electorales-caba/circuitos-electorales.shp"
   ruta_excel: "data/G2023_resultados_presidente.xlsx"
   ruta_shp: "geo/ign_provincia/ign_provincia.shp"
   ruta_g25: "data/G2025_resultados_diputados nacionales.xlsx"
@@ -27,13 +27,13 @@ params:
 
 # Mapas en acción: Análisis y visualización espacial con R
 
-## 3. Es más complejo
+## 4. Analítica avanzada
 
-En este encuentro se buscará incorporar instrumentos más avanzados al momento de visualizar información geográfica.
+Despejando el ruido. Aquí se buscará identificar patrones regionales del voto en la Ciudad de Buenos Aires. 
 
-## 3.1. Pregunta-problema
+## 4.1. Pregunta-problema
 
-El objetivo será analizar las elecciones en la Provincia de Buenos Aires a nivel de sección electoral. ¿Dónde le fue mejor y peor a cada partido? ¿Qué región contribuyó más a la fuerza ganadora?
+El objetivo será analizar las elecciones en la Ciudad de Buenos Aires a nivel de circuito electoral. ¿Cómo cambió el patrón regional del voto a La Libertad Avanza en la Ciudad de Buenos Aires?
 
 Cargamos las librerías.
 
@@ -42,15 +42,56 @@ library(tidyverse)
 library(sf)
 ```
 
-## 3.2. ¿Qué puede un geojson?
+## 4.2. Unidades de agregación
 
-Primero hay que armar el objeto geográfico con resultados electorales.
+La información electoral tiene distintos niveles de agregación. En general se trabaja a nivel distrito (provincias), a nivel sección o a nivel circuitos electorales.
 
 ```{r}
-res <- readxl::read_excel(params$ruta_pba)
+cir <- st_read(params$ruta_circuitos_caba) %>% 
+  mutate(indice_feminidad = FEMENINO / MASCULINO * 100)
 
-dim(res)
+dim(cir)
+head(cir,2)
 ```
+
+Se realiza la agregación espacial para conseguir la geometría a nivel sección y a nivel distrito.
+
+```{r}
+sec <- cir %>% 
+  group_by(COMUNA) %>% 
+  summarise(geometry = st_union(geometry),
+            MASCULINO = sum(MASCULINO),
+            FEMENINO = sum(FEMENINO)) %>% 
+  mutate(indice_feminidad = FEMENINO / MASCULINO * 100) 
+
+dis <- cir %>% 
+  mutate(distrito="CABA") %>% 
+  group_by(distrito) %>% 
+  summarise(geometry = st_union(geometry),
+            MASCULINO = sum(MASCULINO),
+            FEMENINO = sum(FEMENINO)) %>% 
+  mutate(indice_feminidad = FEMENINO / MASCULINO * 100) 
+
+ggplot()+
+  geom_sf(data=cir, aes(color="Circuito"), fill=NaN)+
+  geom_sf(data=sec, aes(color="Sección"), fill=NaN)+
+  geom_sf(data=dis, aes(color="Distrito"), fill=NaN)+
+  scale_color_manual(name = "Nivel",  values = c("Circuito" = "gray","Sección" = "black","Distrito" = "red"))+
+  labs(title="Ciudad de Buenos Aires",
+       subtitle="Niveles de agregación para información electoral")+
+  theme_void()
+  
+```
+Cada nivel de agregación requiere su propio cálculo, ya que cada unidad pesan de manera diferencial en el agregado.
+
+```{r}
+ggplot(data=cir)+
+  geom_sf(aes(fill=indice_feminidad))
+
+```
+
+
+
 
 ```{r}
 geo <- st_read(params$ruta_partidos) %>% 
