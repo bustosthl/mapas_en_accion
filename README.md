@@ -23,7 +23,7 @@ ofrece herramientas potentes, abiertas y reproducibles para hacerlo sin depender
 - [G2023 resultados a presidente en PBA](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/data/G2023_resultados_presidente_PBA.xlsx)
 - [G2015 resultados a presidente en PBA](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/data/G2015_resultados_presidente_PBA.xlsx)
 - [B2015 resultados a presidente en PBA](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/data/B2015_resultados_presidente_PBA.xlsx)
-- [G2025 resultados diputados nacionales](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/data/G2025_resultados_diputados nacionales.xlsx)
+- G2025 resultados diputados nacionales
 
 ## Bases de datos geográficas
 - [Provincias](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/geo/ign_provincia/ign_provincia.shp)
