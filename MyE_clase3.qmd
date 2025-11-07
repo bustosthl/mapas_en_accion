@@ -14,11 +14,7 @@ execute:
   warning: false
   message: false
 params:
-  prov_name_col: "NOMBRE_PROVINCIA"   # Cambiá este nombre si tu shapefile usa otra columna
-  ruta_csv: "data/G2023_resultados_presidente.csv"
-  ruta_excel: "data/G2023_resultados_presidente.xlsx"
-  ruta_shp: "geo/ign_provincia/ign_provincia.shp"
-  ruta_g25: "data/G2025_resultados_diputados nacionales.xlsx"
+  prov_name_col: "NOMBRE_PROVINCIA" 
   ruta_pba: "data/G2023_resultados_presidente_PBA.xlsx"
   ruta_pba_b15: "data/B2015_resultados_presidente_PBA.xlsx"
   ruta_partidos: "geo/partidos.geojson"

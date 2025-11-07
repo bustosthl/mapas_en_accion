@@ -16,7 +16,6 @@ execute:
 params:
   prov_name_col: "NOMBRE_PROVINCIA"   
   ruta_csv: "data/G2023_resultados_presidente.csv"
-  ruta_excel: "data/G2023_resultados_presidente.xlsx"
   ruta_shp: "geo/ign_provincia/ign_provincia.shp"
   ruta_g25: "data/G2025_resultados_diputados nacionales.xlsx"
 ---
@@ -50,6 +49,7 @@ Primero cargamos la base de datos que utilizamos el encuentro pasado. Visualicem
 
 ```{r}
 res <- read_csv(params$ruta_csv)
+
 res %>% 
   ggplot(aes(y=reorder(Partido,Porcentaje)))+
   geom_point(aes(x=Porcentaje), color="black", size=4, alpha=.3)+
@@ -220,7 +220,7 @@ Reduce el número de vértices de un polígono para simplificar su forma, manten
 prov <- "TUCUMAN"
 geo %>% 
   filter(key==prov) %>% 
-  st_simplify(dTolerance = 20000) %>% 
+  st_simplify(dTolerance = 10000) %>% 
   ggplot()+
   geom_sf(aes(color="Simplificado"), alpha=0, show.legend=TRUE)+
   geom_sf(data=filter(geo, key==prov), aes(color="Real"), alpha=0, show.legend=TRUE)+
@@ -364,12 +364,11 @@ geo %>%
 
 ## 🧪 Práctica corta (15 minutos)
 
-Elegir y resolver alguna de las siguientes consignas. 
+Elegir y resolver alguna de las siguientes consignas.
 
 -   Sumar la mediana al gráfico de promedio por provincia. Usar otro color para distinguir las dos medidas de centralidad.
 -   Tomar una de las regiones ya creadas y graficar el área en los polígonos. Sumar centroides y etiquetas.
--   Graficar el área de para todas las provincias utilizando bordes simplificados. Jugar con el valor de simplificación para que se note la operación. 
-
+-   Graficar el área de para todas las provincias utilizando bordes simplificados. Jugar con el valor de simplificación para que se note la operación.
 
 ## 2.4. Visualizando resultados electorales
 
@@ -444,7 +443,7 @@ df %>%
   theme(plot.caption = element_text(hjust = 0))
 ```
 
-Podría querer definir los puntos de corte. Por ejemplo, en el total nacional. 
+Podría querer definir los puntos de corte. Por ejemplo, en el total nacional.
 
 ```{r}
 df %>% 
@@ -463,12 +462,13 @@ df %>%
   theme(plot.caption = element_text(hjust = 0))
 ```
 
-Hay diversas formas de generar grupos a partir de una serie continua de valores. 
+Hay diversas formas de generar grupos a partir de una serie continua de valores.
 
 ::: {.panel-tabset .nav-pills}
 ### Intervalos iguales
 
 Es útil cuando te interesa más el valor que la cantidad de unidades que están incluidas en el rango.
+
 ```{r}
 
 k <- 3
@@ -496,7 +496,9 @@ df %>%
 ```
 
 ### Cuantiles
+
 Es útil cuando se precisa que cada grupo tenga la misma cantidad de observaciones.
+
 ```{r}
 breaks <- classInt::classIntervals(serie, n=k, style="quantile")$brks
 
@@ -517,7 +519,9 @@ df %>%
 ```
 
 ### Cortes naturales
-Usualmente se utiliza el método *Jenks*. Los grupos que se forman buscan maximilizar sus diferencias; en otras palabras, se colocan los límites donde hay mayores diferencias entre los valores. 
+
+Usualmente se utiliza el método *Jenks*. Los grupos que se forman buscan maximizar sus diferencias; en otras palabras, se colocan los límites donde hay mayores diferencias entre los valores.
+
 ```{r}
 breaks <- classInt::classIntervals(serie, n=k, style="jenks")$brks
 
@@ -536,7 +540,8 @@ df %>%
   theme_void()+
   theme(plot.caption = element_text(hjust = 0))
 ```
-### Comparación 
+
+### Comparación
 
 Comparación entre métodos de clasificación.
 
@@ -575,7 +580,8 @@ ggplot(data.frame(Porcentaje = serie), aes(x = Porcentaje)) +
 
 ### Divergentes
 
-Cuando la información que estamos mostrando tiene un rango que incluye números negativos y positivos, puede ser más adecuado utilizar una paleta divergente, compuesta por dos colores y un centro neutro (blanco, gris, negro). Carguemos los resultados de las últimas elecciones para utilizarla. 
+Cuando la información que estamos mostrando tiene un rango que incluye números negativos y positivos, puede ser más adecuado utilizar una paleta divergente, compuesta por dos colores y un centro neutro (blanco, gris, negro). Carguemos los resultados de las últimas elecciones para utilizarla.
+
 ```{r}
 g2025 <- readxl::read_excel(params$ruta_g25) %>%
   rename(porcentaje_2025 = Porcentaje) %>% 
@@ -600,7 +606,7 @@ dif %>%
   theme(plot.caption = element_text(hjust = 0))
 ```
 
-Es más adecuado que el color neutro esté cerca del valor neutro. En este caso, cero y controlar la equivalencia de en las intensidades entre los dos colores. 
+Es más adecuado que el color neutro esté cerca del valor neutro. En este caso, cero y controlar la equivalencia de en las intensidades entre los dos colores.
 
 ```{r}
 dif %>% 
@@ -649,14 +655,15 @@ df %>%
 ## 🧩 Para seguir practicando
 
 -   Graficar la diferencia del peronismo entre 2025 y 2023.
--   Graficar ganador de las elecciones 2023 pero a nivel región. 
+-   Graficar ganador de las elecciones 2023 pero a nivel región.
 -   Graficar la diferencia de La Libertad Avanza entre 2025 y 2023 utilizando una paleta divergente pero con sus valores clasificados en 3 o 5 grupos.
 
 ------------------------------------------------------------------------
 
 ## 2.5 Bonus track
 
-Si quisiera replicar este mismo mapa para distintos partidos sin repetir cinco veces el mismo código, una alternativa opción es la siguiente. 
+Si quisiera replicar este mismo mapa para distintos partidos sin repetir cinco veces el mismo código, una alternativa opción es la siguiente.
+
 ```{r}
 paletas <- c( "UNION POR LA PATRIA" = "Blues",
               "LA LIBERTAD AVANZA" = "Purples",
@@ -685,4 +692,3 @@ patchwork::wrap_plots(plots, ncol = 5) +
   patchwork::plot_annotation(title="Elecciones generales 2023",
                              subtitle="Resultados por partido")
 ```
-
