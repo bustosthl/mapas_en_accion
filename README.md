@@ -1,4 +1,5 @@
 # MAPAS EN ACCIÓN
+
 Análisis y visualización espacial con R para Ciencias Sociales.
 
 Expresá tus datos en mapas, combinando análisis espacial y visualización de información estadística. En
@@ -12,23 +13,27 @@ Porque comprender el territorio es clave para analizar fenómenos sociales, ambi
 ofrece herramientas potentes, abiertas y reproducibles para hacerlo sin depender de software propietario.
 
 ## Presentaciones
-- [Presentación 1: Introducción a toda marcha.](https://htmlpreview.github.io/?https://github.com/bustosthl/mapas_en_accion/main/MyE_clase1.html)
-- [Presentación 2: Afinando las herramientas.](https://htmlpreview.github.io/?https://github.com/bustosthl/mapas_en_accion/main/MyE_clase2.html)
-- [Presentación 3: Es más complejo.](https://htmlpreview.github.io/?https://github.com/bustosthl/mapas_en_accion/main/MyE_clase3.html)
-- [Presentación 4: Analítica avanzada.](https://htmlpreview.github.io/?https://github.com/bustosthl/mapas_en_accion/main/MyE_clase4.html)
+
+* [Presentación 1: Introducción a toda marcha.](https://htmlpreview.github.io/?https://github.com/bustosthl/mapas_en_accion/main/MyE_clase1.html)
+* [Presentación 2: Afinando las herramientas.](https://htmlpreview.github.io/?https://github.com/bustosthl/mapas_en_accion/main/MyE_clase2.html)
+* [Presentación 3: Es más complejo.](https://htmlpreview.github.io/?https://github.com/bustosthl/mapas_en_accion/main/MyE_clase3.html)
+* [Presentación 4: Analítica avanzada.](https://htmlpreview.github.io/?https://github.com/bustosthl/mapas_en_accion/main/MyE_clase4.html)
+* 
 
 ## Bases de datos electorales
-- [G2023 resultados a presidente (csv)](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/data/G2023_resultados_presidente.csv)
-- [G2023 resultados a presidente (excel)](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/data/G2023_resultados_presidente.xlsx)
-- [G2023 resultados a presidente en PBA](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/data/G2023_resultados_presidente_PBA.xlsx)
-- [G2015 resultados a presidente en PBA](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/data/G2015_resultados_presidente_PBA.xlsx)
-- [B2015 resultados a presidente en PBA](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/data/B2015_resultados_presidente_PBA.xlsx)
-- [G2025 resultados diputados nacionales](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/data/G2025_resultados_diputados_nacionales.xlsx)
-- [G2023 resultados legislativos CABA](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/data/CABA_dip_generales_2019_2025.csv)
-- 
+
+* [G2023 resultados a presidente (csv)](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/data/G2023_resultados_presidente.csv)
+* [G2023 resultados a presidente (excel)](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/data/G2023_resultados_presidente.xlsx)
+* [G2023 resultados a presidente en PBA](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/data/G2023_resultados_presidente_PBA.xlsx)
+* [G2015 resultados a presidente en PBA](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/data/G2015_resultados_presidente_PBA.xlsx)
+* [B2015 resultados a presidente en PBA](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/data/B2015_resultados_presidente_PBA.xlsx)
+* [G2025 resultados diputados nacionales](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/data/G2025_resultados_diputados_nacionales.xlsx)
+* [G2023 resultados legislativos CABA](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/data/CABA_dip_generales_2019_2025.csv)
+
+
 
 ## Bases de datos geográficas
-- [Provincias](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/geo/ign_provincia/ign_provincia.shp)
-- [Equivalencias](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/geo/equivalencias.xlsx)
-- [Partidos PBA](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/geo/partidos.geojson)
-	
+
+* [Provincias](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/geo/ign_provincia/ign_provincia.shp)
+* [Equivalencias](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/geo/equivalencias.xlsx)
+* [Partidos PBA](https://raw.githubusercontent.com/bustosthl/mapas_en_accion/main/geo/partidos.geojson)
