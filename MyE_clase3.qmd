@@ -122,7 +122,7 @@ head(equi)
 Tenemos un problema de compatibilidad de tipos. En este caso, nos conviene utilizar números.
 
 ```{r}
-# df %>% left_join(equi, by=c("cde"="municipio_id"))
+#df %>% left_join(equi, by=c("cde"="municipio_id"))
 ```
 
 Transformamos y unimos.
@@ -131,6 +131,7 @@ Transformamos y unimos.
 df <- df %>% 
   mutate(municipio_id = as.numeric(cde))%>% 
   left_join(equi, by="municipio_id")
+View(df)
 ```
 
 Con `patchwork` podemos unir ambos mapas en un mismo eje.
@@ -174,7 +175,7 @@ El argumento `annotation_*` nos va a permitir agregar ciertos elementos al gráf
 df %>% 
   filter(Partido == "UNION POR LA PATRIA") %>% 
   ggplot()+
-  annotation_map_tile(zoom=5) +
+  annotation_map_tile(zoom=8) +
   annotation_north_arrow(location = "br", which_north = "true",
                          height = unit(.8, "cm"), width = unit(.8, "cm"))+
   geom_sf(aes(fill=Porcentaje), color="black", alpha=.8)+
@@ -196,7 +197,7 @@ df %>%
   filter(Partido == "UNION POR LA PATRIA") %>% 
   filter(seccion_electoral %in% c("I", "III", "VIII")) %>% 
   ggplot()+
-  annotation_map_tile(zoom=7) + # con zoom=8 o más se rompe el renderizado para web. Probar localmente.
+  annotation_map_tile(zoom=9) + # con zoom=8 o más se rompe el renderizado para web. Probar localmente.
   geom_sf(aes(fill=Porcentaje), color="black", alpha=.8)+
   scale_fill_fermenter(palette = "Blues", direction = 1, n.breaks=3,
                        labels = scales::label_number(suffix = "%"))+ 
@@ -219,7 +220,7 @@ df %>%
   filter(Partido == "UNION POR LA PATRIA") %>%
   filter(seccion_electoral %in% c("I", "III", "VIII")) %>% 
   ggplot()+
-  annotation_map_tile(type="cartodark", zoom=7) + # con zoom=8 o más se rompe el renderizado para web. Probar localmente.
+  annotation_map_tile(type="cartodark", zoom=9) + # con zoom=8 o más se rompe el renderizado para web. Probar localmente.
   geom_sf(aes(fill=Porcentaje), color="black", alpha=.8)+
   scale_fill_fermenter(palette = "Blues", direction = 1, n.breaks=3,
                        labels = scales::label_number(suffix = "%"))+ 
@@ -366,7 +367,8 @@ dim <- 2
 pal <- "GrPink" # otras paletas: "Bluegill", "BlueGold", "BlueOr", "BlueYl", "Brown"/"Brown2", "DkBlue"/"DkBlue2", "DkCyan"/"DkCyan2", "DkViolet"/"DkViolet2", "GrPink"/"GrPink2", "PinkGrn", "PurpleGrn", or "PurpleOr"
 df_biscale <- df_filtrado %>% 
   mutate(Votos = as.numeric(Votos)) %>% 
-  bi_class(x="Votos", y="Porcentaje", style="quantile", dim=dim)
+  mutate(Electores = as.numeric(Electores)) %>% 
+  bi_class(x="Electores", y="Porcentaje", style="quantile", dim=dim)
 
 map <- ggplot(df_biscale) +
   geom_sf(aes(fill = bi_class), 
@@ -426,7 +428,7 @@ df15 %>%
   geom_sf(aes(fill=ganador))+
   scale_fill_manual(values=colores, name="ganador")+
   labs(title="Ganador por departamento",
-       subtitle="Elecciones presidenciales G2015")+
+       subtitle="Elecciones presidenciales B2015")+
   theme_void()
 ```
 
@@ -510,7 +512,7 @@ df_point %>%
   scale_fill_manual(values=colores, name="ganador")+
   geom_sf(data=geo_prov, alpha=0)+
   labs(title="Ganador por departamento",
-       subtitle="Elecciones presidenciales G2015")+
+       subtitle="Elecciones presidenciales B2015")+
   theme_void()
 ```
 
@@ -542,14 +544,14 @@ df15 <- readxl::read_excel(params$ruta_pba_b15) %>%
 df15_dorling <- cartogram_dorling(df15, 
                                   "brecha", 
                                   k = 1, # separación mínima
-                                  itermax = 250)
+                                  itermax = 20)
 
 ggplot() +
   geom_sf(data = df15_dorling, aes(fill = ganador), color = NA)+
   scale_fill_manual(values=colores, name="ganador")+
   geom_sf(data=geo_prov, alpha=0)+
   labs(title="Ganador por departamento",
-       subtitle="Elecciones presidenciales G2015")+
+       subtitle="Elecciones presidenciales B2015")+
   theme_void()
 ```
 

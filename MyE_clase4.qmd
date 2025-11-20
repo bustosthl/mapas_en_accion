@@ -111,6 +111,7 @@ plot_cir <- ggplot(data=cir)+
 ```
 
 Carguemos las bases de datos.
+
 ```{r}
 # seleccionamos las columnas imprescindibles
 cir_clean <- cir %>% 
@@ -126,14 +127,14 @@ gdf <- read_csv(params$ruta_resultados_caba) %>%
 head(gdf,2) 
 ```
 
-
 ## 4.3. Autocorrelación espacial
 
 El uso de herramientas estadísticas para cuantificar y clarificar el análisis de datos (en complemento con la visualización) es indispensable para una correcta comprensión de los fenómenos. Para explorar la relación lineal entre variables se suelen utilizar coeficientes de correlación. Permiten identificar la dirección y la intensidad de las asociaciones lineales entre los distintos indicadores.
 
 ![](img/corr.png)
 
-En nuestro ejemplo, podemos ver la relación entre el voto entre dos fuerzas políticas. 
+En nuestro ejemplo, podemos ver la relación entre el voto entre dos fuerzas políticas.
+
 ```{r}
 gdf %>% 
   st_drop_geometry() %>% 
@@ -148,7 +149,11 @@ gdf %>%
   labs(title="Relación entre el voto a JxC y UxP",
        subtitle="Resultados electorales por circuito - CABA G2023")+
   theme_minimal()
+```
 
+Veamos una segunda relación entre otros espacios.
+
+```{r}
 gdf %>% 
   st_drop_geometry() %>% 
   filter(partido %in% c("blanco", "fit-u")) %>% 
@@ -169,12 +174,13 @@ Al trabajar con datos espaciales, la relación entre los valores de una variable
 ![](img/sp_corr.png)
 
 ¿Cómo ver si una fuerza tiene patrones espaciales?
+
 ```{r}
 gdf %>% 
   filter(partido == "la libertad avanza") %>% 
   ggplot()+
   geom_sf(aes(fill=porcentaje)) +
-  #geom_sf(data=sec, color="black", fill=NaN, linewidth=.7)+
+  geom_sf(data=sec, color="black", fill=NaN, linewidth=.7)+
   scale_fill_fermenter(palette = "Purples", direction = 1)+
   labs(title="La Libertad Avanza (%)",
        subtitle="Resultados electorales por circuito - CABA G2023")+
@@ -186,6 +192,7 @@ La definición clave es: ¿con qué relacionamos cada unidad? Con sus **vecinos*
 ![](img/vecinos.png)
 
 Trabajaremos en formato *wide* para que sea más cómoda de manipular la base de datos.
+
 ```{r}
 partidos <- c("la libertad avanza", "union por la patria", "juntos por el cambio")
 gdf_w <- gdf %>% 
@@ -197,7 +204,7 @@ gdf_w <- gdf %>%
 
 
 vecinos <- poly2nb(gdf_w, row.names = gdf_w$circuito, queen = T)
-pesos <- nb2listw(vecinos, style="C", zero.policy=T)
+pesos <- nb2listw(vecinos, style="minmax", zero.policy=T)
 serie_lla <- gdf_w$`la libertad avanza`
 ids <- gdf_w$circuito
 
@@ -207,29 +214,29 @@ vecinos[1:2]
 ```
 
 Veamoslo gráficamente.
+
 ```{r}
 circuito_objetivo <- 60
 
 ggplot()+
-  geom_sf(data=cir)+
-  geom_sf(data=filter(cir, CIRCUITO_N==circuito_objetivo), aes(fill="Objetivo"))+
-  geom_sf(data=filter(cir, CIRCUITO_N %in% vecinos[circuito_objetivo][[1]]), aes(fill="Vecinos"))+
+  geom_sf(data=cir, color="black")+
+  geom_sf(data=filter(cir, CIRCUITO_N==circuito_objetivo), aes(fill="Objetivo"), color="black")+
+  geom_sf(data=filter(cir, CIRCUITO_N %in% vecinos[circuito_objetivo][[1]]), aes(fill="Vecinos"), color="black")+
   scale_fill_manual(name = "Clasificación",  values = c("Objetivo" = "green","Vecinos" = "darkgreen"))+
   labs(title="Circuitos electorales en CABA")+
   theme_void()
 ```
 
-
-
 ## 4.4. Medida global: índice I de Moran
 
-El índice I de Moran es una medida clásica de autocorrelación espacial que permite evaluar en qué medida los valores de una variable se agrupan en el espacio. Este indicador toma valores entre aproximadamente –1 y 1. Los valores positivos indican una autocorrelación espacial positiva —áreas con valores similares tienden a agruparse—, mientras que los valores negativos reflejan una autocorrelación negativa, donde unidades con valores altos suelen estar rodeadas de unidades con valores bajos (y viceversa). Un valor cercano a cero sugiere ausencia de patrón espacial, es decir, una distribución aleatoria.
+El índice I de Moran es una medida clásica de autocorrelación espacial que permite evaluar en qué medida los valores de una variable se agrupan en el espacio. Este indicador toma valores entre –1 y 1. Los valores positivos indican una autocorrelación espacial positiva —áreas con valores similares tienden a agruparse—, mientras que los valores negativos reflejan una autocorrelación negativa, donde unidades con valores altos suelen estar rodeadas de unidades con valores bajos (y viceversa). Un valor cercano a cero sugiere ausencia de patrón espacial, es decir, una distribución aleatoria.
 
-El análisis del índice de Moran global ofrece una visión sintética del grado de dependencia espacial en la región analizada, funcionando como una “correlación espacial” general. Se complementa con el cálculo del valor p que indica si la autocorrelación observada es estadísticamente significativa o podría explicarse por azar. 
+El análisis del índice de Moran global ofrece una visión sintética del grado de dependencia espacial en la región analizada, funcionando como una “correlación espacial” general. Se complementa con el cálculo del valor p que indica si la autocorrelación observada es estadísticamente significativa o podría explicarse por azar.
 
 ![](img/formula.jpg)
 
 Calculemos el índice para nuestra serie.
+
 ```{r}
 i_moran <- moran(serie_lla, # serie
                  n = length(vecinos), # cantidad de zonas
@@ -241,19 +248,26 @@ paste0("I Moran de LLA: ",round(i_moran,3))
 ```
 
 Confirmamos significancia estadística.
+
 ```{r}
 moran.test(serie_lla, pesos)
 ```
+
 Veamos un diagrama de dispersión entre cada valor y el promedio de sus vecinos.
+
 ```{r}
 moran_df <- moran.plot(serie_lla, 
                        listw = pesos, 
                        zero.policy = TRUE, 
                        labels = ids)
 ```
+
 Las variables que nos interesan:
+
 -   `x`: es el valor estandarizado de la variable que se está estudiando.
+
 -   `wx:` es el valor lag de la variable.
+
 -   `labels:` las etiquetas de la variable.
 
 ```{r}
@@ -262,10 +276,9 @@ moran_df %>%
   head()
 ```
 
-
 ## 4.5. Medida local: LISA
 
-Para considerar la heterogeneidad especial podemos hacer uso de índices de asociación espacial locales. En el caso del índice I de Moran, existe su versión desagregada para analizar cómo varía la relación entre cada punto y sus vecinos. 
+Para considerar la heterogeneidad especial podemos hacer uso de índices de asociación espacial locales. En el caso del índice I de Moran, existe su versión desagregada para analizar cómo varía la relación entre cada punto y sus vecinos.
 
 ```{r}
 i_moran_local <- localmoran(serie_lla, listw = pesos)
@@ -284,13 +297,11 @@ i_moran_local %>%
 # mapa coloreado para LLA 
 
 ```
-Las variables que nos interesan son las siguientes. 
--   `Ii`: Valor del Moran local
--   `Pr(...)`: p-value del Moran local
--   `Cuadrante (mean)` : Cuadrante donde podemos clasificar el Moran local.
 
+Las variables que nos interesan son las siguientes. - `Ii`: Valor del Moran local - `Pr(...)`: p-value del Moran local - `Cuadrante (mean)` : Cuadrante donde podemos clasificar el Moran local.
 
 Repliquemos el gráfico anterior pero señalando los cuadrantes.
+
 ```{r}
 nombres <- unique(i_moran_local$cuadrante_v2)
 nombres <- c("ns","High-High", "High-Low","Low-High","Low-Low")
@@ -328,6 +339,7 @@ plot_lla
 ```
 
 Replicamos para el resto de los partidos.
+
 ```{r}
 serie_uxp <- gdf_w$`union por la patria`
 serie_jxc <- gdf_w$`juntos por el cambio`
@@ -398,6 +410,7 @@ gdf %>%
 ```
 
 Las escalas diferenciadas complican la lectura. Normalicemos desde los datos para poder aplicar el facetado.
+
 ```{r}
 gdf %>% 
   filter(partido %in% partidos) %>%
@@ -417,15 +430,13 @@ gdf %>%
 ```
 
 Finalmente, vemos los cuadrantes.
+
 ```{r}
 (plot_lla + plot_jxc + plot_uxp)+
   plot_layout(guides="collect", ncol=3)+
   plot_annotation(title="Autocorrelación espacial")
 ```
 
-
 ## 🧪 Práctica (15 minutos)
 
 -   Calcular el índice I de Moran Local para LLA en el año 2025. Analizar los patrones geográficos del voto a La Libertad Avanza en el año 2023 y en el año 2025. ¿Qué pueden decir al respecto?
-
-

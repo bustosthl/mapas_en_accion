@@ -12,6 +12,9 @@ coropléticos y de puntos hasta visualizaciones interactivas y análisis de auto
 Porque comprender el territorio es clave para analizar fenómenos sociales, ambientales o económicos, y R
 ofrece herramientas potentes, abiertas y reproducibles para hacerlo sin depender de software propietario.
 
+## Trabajo final
+[Link a cosigna del trabajo final](https://docs.google.com/document/d/1W1Ijxc6ACmnwxbffv68pPEWMudamOnAzB02YNjS0EhA/edit?usp=sharing)
+
 ## Presentaciones
 
 * [Presentación 1: Introducción a toda marcha.](https://htmlpreview.github.io/?https://github.com/bustosthl/mapas_en_accion/main/MyE_clase1.html)
