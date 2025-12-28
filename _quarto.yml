@@ -1,0 +1,51 @@
+project:
+  type: website
+  output-dir: docs
+
+execute:
+  #echo: false
+  warning: false
+  freeze: auto
+
+website:
+  title: "mapas en acción"
+  page-navigation: true
+  back-to-top-navigation: true
+  page-footer: "Tomás Bustos | Ciudad de Buenos Aires | octubre 2025"
+  navbar:
+    background: primary
+    foreground: secondary
+    search: true
+    left: 
+      - MeA_encuentro1.qmd
+      - MeA_encuentro2.qmd
+      - MeA_encuentro3.qmd
+      - MeA_encuentro4.qmd
+      
+  sidebar:
+    title: "Capítulos"
+    subtitle: "Capítulos sub"
+    style: "docked"
+    tools:
+      - icon: github
+        menu: 
+          - text: "Código fuente"
+            href: https://github.com/bustosthl/mapas_en_accion
+      - icon: linkedin
+        href: https://www.linkedin.com/in/tomasbustos/
+    contents: 
+      - href: index.qmd
+      - href: MeA_encuentro1.qmd
+      - href: MeA_encuentro2.qmd
+      - href: MeA_encuentro3.qmd
+      - href: MeA_encuentro4.qmd
+          
+      
+format:
+  html:
+    theme: simplex #flatly simplex cosmo
+    toc: true
+    toc-title: "Apartados"
+
+editor: visual
+
