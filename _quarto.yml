@@ -24,7 +24,6 @@ website:
       
   sidebar:
     title: "Capítulos"
-    subtitle: "Capítulos sub"
     style: "docked"
     tools:
       - icon: github
