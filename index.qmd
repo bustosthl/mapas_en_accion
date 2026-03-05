@@ -7,8 +7,8 @@ toc: false
 
 # Mapas en acción: Análisis y visualización espacial con R
 
-*Horario*: jueves 19hs / 2 horas de encuentro / 4 clases\
-*Inicio tentativo:* 19 de febrero de 2026\
+*Horario*: jueves 18.30hs / 2 horas de encuentro / 4 clases\
+*Inicio:* 5 de marzo de 2026\
 *Modalidad:* Encuentros en vivo / Clases grabadas y disponibles.\
 *Docente:* Tomás Bustos.\
 Más información en <https://cutt.ly/mapasenaccion> .
@@ -27,21 +27,21 @@ Porque comprender el territorio es clave para analizar fenómenos sociales, ambi
     -   Viz: Visualización de información con `ggplot`.
     -   Data: Manipular información geográfica con `sf`.
     -   Producto: mapa de resultados para una fuerza.
-    
+
 2.  **Afinando las herramientas**
 
     -   Data: Operaciones complejas sobre tablas.
     -   Data: Operaciones espaciales para información geográfica.
     -   Viz: Visualización de información geográfica. Selección de paletas adecuadas.
     -   Producto: mapa de resultados con distintos recursos visuales (paletas secuenciales continuas y agrupadas, divergentes, categóricas).
-    
+
 3.  **Es más complejo**
 
     -   Viz: Complejizando la visualización de información geográfica: minimapas, mapas de fondo, mapas interactivos.
     -   Producto: Mapas bivariados.
     -   Viz: Visualizando otros objetos geográficos: puntos, líneas.
     -   Producto: partido ganador por sección. Cómo facilitar la interpretación.
-    
+
 4.  **Analítica avanzada**
 
     -   Data: cálculo de autocorrelación espacial global y local.
