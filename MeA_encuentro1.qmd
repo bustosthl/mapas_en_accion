@@ -21,7 +21,8 @@ params:
 
 # Mapas en acción: Análisis y visualización espacial con R
 
-El objetivo del curso es adquirir herramientas para la visualización de información geográfica utilizando R en el ámbito de las Ciencias Sociales. Se utilizarán datos electorales como un ejemplo concreto y cercano, un hilo temático que le dará estructura, coherencia e integridad a los encuentros. Habrá contenidos de tres tipos: *manejo de datos*, *herramientas de visualización* y *un ejemplo concreto* donde lo anterior esté aplicado. La idea es ir avanzando de manera iterativa, pasando en todas los encuentros por los tres tipos de contenidos mencionados antes e ir complejizando su utilziación a medida que avanzan los encuentros.
+El objetivo del curso es adquirir herramientas para la visualización de información geográfica utilizando R en el ámbito de las Ciencias Sociales. Se utilizarán datos electorales como un ejemplo concreto y cercano, un hilo temático qu\
+e le dará estructura, coherencia e integridad a los encuentros. Habrá contenidos de tres tipos: *manejo de datos*, *herramientas de visualización* y *un ejemplo concreto* donde lo anterior esté aplicado. La idea es ir avanzando de manera iterativa, pasando en todas los encuentros por los tres tipos de contenidos mencionados antes e ir complejizando su utilziación a medida que avanzan los encuentros.
 
 Como herramienta didáctica, cada encuentro tendrá una *pregunta que nos guíe*. Es importante para evitar perdernos en el mar de información disponible. Enfocar los esfuerzos nos va a ayudar a buscar mejor qué función necesitamos para responder nuestra pregunta y además valoriza uno de los elementos más importantes que tienen para aportar las Ciencias Sociales al mundo de datos: *hacer preguntas interesantes*.
 
@@ -86,7 +87,7 @@ data
 ```{r}
 #install.packages("readxl") # en caso de error, instalar y cargar librería readxl 
 library(readxl)
-data <- read_excel(params$ruta_excel)
+data <- read_excel(params$ruta_excel)  
 data = read_excel(params$ruta_excel)
 data
 ```
@@ -114,7 +115,7 @@ Para seleccionar filas que nos interesan, según algún valor, podemos utilizar 
 
 ```{r}
 data %>% 
-  filter(Partido=="LA LIBERTAD AVANZA" & Porcentaje > 40 )
+  filter((Partido=="LA LIBERTAD AVANZA") & ( Porcentaje > 40))
 ```
 
 Con el operador pipe (`%>%`) se concatenan las distintas funciones. Si en cambio queremos seleccionar algunas columnas, la función `select()` es la indicada:
@@ -170,7 +171,7 @@ Si quisiéramos volver al formato anterior:
 
 ```{r}
 data_wider %>% 
-  pivot_longer(!id, values_to="valor")
+  pivot_longer(!id, values_to="valor", names_to="partido")
 ```
 
 ## 1.5. Visualización
@@ -196,7 +197,7 @@ Hay tres razones centrales por las que visualizamos la información:
 
 Un gran ejemplo para mostrar lo importante de visualizar los datos es el llamado **Cuarteto de Anscombe**.
 
-![](img/cuarteto_anscombe.jpg)
+![![](images/clipboard-22827546.jpeg)](img/cuarteto_anscombe.jpg)
 
 ### Expresar relaciones complejas
 
@@ -289,7 +290,7 @@ geo %>% class()
 Primeras filas.
 
 ```{r}
-geo %>% head(3)
+geo %>% head(3) 
 ```
 
 La misma librería `ggplot` nos permite graficar archivos geográficos.
@@ -335,7 +336,12 @@ Mercator. Usado en mapas en la web (Google Maps, OpenStreetMap). Conserva formas
 geo %>% 
   st_transform(lista_crs[2]) %>% 
   ggplot()+
-  geom_sf()
+  geom_sf()+
+  coord_sf(
+    xlim = c(-8349065, -5788613),
+    ylim = c(-10967317, -2273031),  
+    expand = FALSE
+  ) 
 
 'ruta <- "https://raw.githubusercontent.com/martynafford/natural-earth-geojson/refs/heads/master/10m/cultural/ne_10m_admin_0_countries.json"
 st_read(ruta) %>% 
