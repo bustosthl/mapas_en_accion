@@ -180,6 +180,7 @@ En el rubro que nos proponemos trabajar los archivos geográficos suelen estar c
 El buffer genera una zona alrededor de un objeto geométrico a la distancia indicada.
 
 ```{r}
+
 # definiciones
 buffer_dist <- 3*10e3
 prov <- "CORDOBA"
@@ -368,7 +369,7 @@ Elegir y resolver alguna de las siguientes consignas.
 
 -   Sumar la mediana al gráfico de promedio por provincia. Usar otro color para distinguir las dos medidas de centralidad.
 -   Tomar una de las regiones ya creadas y graficar el área en los polígonos. Sumar centroides y etiquetas.
--   Graficar el área de para todas las provincias utilizando bordes simplificados. Jugar con el valor de simplificación para que se note la operación.
+-   Graficar el área para todas las provincias utilizando bordes simplificados. Jugar con el valor de simplificación para que se note la operación.
 
 ## 2.4. Visualizando resultados electorales
 
@@ -576,6 +577,56 @@ ggplot(data.frame(Porcentaje = serie), aes(x = Porcentaje)) +
   ) +
   theme_minimal(base_size = 12)
 ```
+
+Veamos otra forma de comparar los cortes.
+
+```{r}
+asignar_grupos <- function(valor, estilo, n_clases) {
+  cortes <- classInt::classIntervals(valor, n = n_clases, style = estilo)$brks
+  findInterval(valor, cortes, all.inside = TRUE)
+}
+
+# formato long
+df_comparativo <- df %>%
+  filter(Partido == "LA LIBERTAD AVANZA") %>% 
+  select(id, Porcentaje) %>%
+  mutate(
+    `Equal` = asignar_grupos(Porcentaje, "equal", k),
+    `Quantile` = asignar_grupos(Porcentaje, "quantile", k),
+    `Jenks` = asignar_grupos(Porcentaje, "jenks", k)
+  ) %>%
+  pivot_longer(
+    cols = c(contains("Equal"), contains("Quantile"), contains("Jenks")),
+    names_to = "metodo",
+    values_to = "grupo"
+  ) %>%
+  mutate(grupo = as.factor(grupo)) %>% 
+  mutate(id = stringr::str_replace_all(id, c("CIUDAD AUTONOMA DE BUENOS AIRES"="CABA",
+                                             "TIERRA DEL FUEGO"="TDF",
+                                             "SANTIAGO DEL ESTERO"="S. DEL ESTERO")))
+
+ggplot(df_comparativo, aes(x = reorder(id, Porcentaje), y = Porcentaje, fill = grupo)) +
+  geom_col(width = 0.8) +
+  # Agregamos los números cerca de la base (y = 1 o el valor que prefieras)
+  geom_text(aes(y = 1, label = round(Porcentaje, 0)), 
+            color = "black", 
+            angle = 90, 
+            hjust = 0, # Alinea el texto hacia arriba desde el punto y=1
+            size = 3) +
+  facet_grid(metodo ~ .) + 
+  scale_fill_brewer(palette = "Purples") +
+  labs(
+    title = "Comparación de métodos de clasificación",
+    y = NULL, # Eliminamos el título del eje Y
+    fill = "Grupo"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 8),
+    axis.text.y = element_blank(), 
+    legend.position = "bottom"
+  )
+```
 :::
 
 ### Divergentes
@@ -613,7 +664,7 @@ dif %>%
   ggplot()+
   geom_sf(aes(fill=dif), color="black") +
   scale_fill_gradient2(low = "#D73027", mid = "#FFFFBF", high = "#1A9850",
-                       midpoint=0, limits=c(-23, 23),
+                       midpoint=0, limits=c(-30, 30),
                        labels = scales::label_number(suffix = "%")
                        ) + 
   labs(x="", y="", fill="",
