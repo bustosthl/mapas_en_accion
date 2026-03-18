@@ -556,7 +556,7 @@ ggplot() +
   theme_void()
 ```
 
-La inspiración viene de aquí:
+La inspiración viene de [aquí](￼):
 
 ![](https://nypost.com/wp-content/uploads/sites/2/2020/11/US-election-2020-2.gif)
 
@@ -569,3 +569,23 @@ La inspiración viene de aquí:
 -   Pensar otro caso donde puede ser útil la técnica *Dorling Cartogram* y aplicarla.
 
 ------------------------------------------------------------------------
+
+## Yapa: radios censales y circuitos electorales
+
+```{r}
+cir_path = "http://datar.info//dataset/fc99d6a8-9b47-4e9e-9436-58038735a5eb/resource/c836bb95-4e4e-4b33-8578-057175748d89/download/circuitoselectoralescaba.json"
+cir <-  st_read(cir_path)
+cir
+
+rad_path <- "https://cdn.buenosaires.gob.ar/datosabiertos/datasets/direccion-general-de-estadisticas-y-censos/informacion-censal-por-radio/caba_radios_censales.geojson"
+rad <- st_read(rad_path)
+
+ggplot()+
+  geom_sf(data=rad, aes(color="Radios censales"), fill=NaN)+
+  geom_sf(data=cir, aes(color="Circuitos electorales"), fill=NaN, linewidth=.8)+
+  coord_sf(xlim = c(-58.490, -58.430), ylim = c(-34.615, -34.575))+
+  scale_color_manual(values = c("Radios censales" = "red", "Circuitos electorales" = "black"),
+                     name = "Capas Geográficas") +
+  labs(title="Superposición circuitos y radios censales", subtitle="Ciudad de Buenos Aires - Comuna 15")
+```
+
